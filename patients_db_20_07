@@ -1,0 +1,38 @@
+import sqlite3 as lite
+import sys
+ 
+ 
+try:
+    
+    con = lite.connect('wizyty.db')
+    with con:
+        cur = con.cursor()
+        
+        cur.execute("CREATE TABLE IF NOT EXISTS Patients(Name TEXT, Surname TEXT, Pesel INT, Description TEXT)")
+        answer = raw_input('Add a new patient: A\nShow whole database: D \nLook up a patient?: S \nQuit: Q\n')
+        while  answer <> 'Q':
+            if answer == 'A':
+            
+                Name = raw_input('Name: ')
+            
+                Surname = raw_input('Surname: ')
+                Pesel = int(raw_input('Pesel: '))
+                Description = raw_input('Description: ')
+                patient = (Name, Surname, Pesel, Description)
+                cur.execute("INSERT INTO Patients VALUES(?,?,?,?)", patient)
+            elif answer == 'D':
+                cur.execute("SELECT * from Patients")
+                rows = cur.fetchall()
+                for row in rows:
+                    print row
+            elif answer == 'S':
+                person = raw_input("Last name, please:\n")
+                cur.execute("SELECT * from Patients WHERE Surname=?",person)
+                row = cur.fetchone()
+                print row
+            else:
+                pass
+
+            answer = raw_input('should I add a new patient or looku up one? add/database/search/quit\n')
+except Exception, e:
+    print e
